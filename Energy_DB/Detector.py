@@ -1,8 +1,9 @@
 class Detector():
 
-    def __init__ (self, name):
+    def __init__ (self, name, values):
         self.name = name
-        self.value_list = []
-
-    def add_value(self,value):
-        self.value_list.append(value)
+        self.values_dict = {}
+        self.hour = 1
+        for element in values:
+            self.values_dict[self.hour] = element
+            self.hour += 1

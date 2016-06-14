@@ -12,8 +12,8 @@ def create_tables(conn):
                     Hour_13 REAL, Hour_14 REAL, Hour_15 REAL, Hour_16 REAL, Hour_17 REAL, Hour_18 REAL,
                     Hour_19 REAL, Hour_20 REAL, Hour_21 REAL, Hour_22 REAL, Hour_23 REAL, Hour_24 REAL
                     ) """)
-    except:
-        print('Rise error, Detector_table creation error')
+    except Exception as e:
+        print('Rise error, Detector_table creation error', e)
     conn.commit()
 
     try:
@@ -23,8 +23,8 @@ def create_tables(conn):
                     room_name CHARACTER VARYING (200),
                     detector CHARACTER VARYING (200)
                     ) ''')
-    except:
-        print('Rise error, Room_table creation error')
+    except Exception as e:
+        print('Rise error, Room_table creation error', e)
     conn.commit()
 
     try:
@@ -34,8 +34,8 @@ def create_tables(conn):
                     office_name CHARACTER VARYING (200),
                     room CHARACTER VARYING (200)
                     ) ''')
-    except:
-        print('Rise error, Office_table creation error')
+    except Exception as e:
+        print('Rise error, Office_table creation error', e)
     conn.commit()
 
     try:
@@ -45,8 +45,8 @@ def create_tables(conn):
                     floor_name CHARACTER VARYING (200),
                     office CHARACTER VARYING (200)
                     ) ''')
-    except:
-        print('Rise error, Floor_table creation error')
+    except Exception as e:
+        print('Rise error, Floor_table creation error', e)
     conn.commit()
 
     try:
@@ -56,7 +56,7 @@ def create_tables(conn):
                     Building_name CHARACTER VARYING (200),
                     floor CHARACTER VARYING (200)
                     ) ''')
-    except:
-        print('Rise error, Floor_table creation error')
+    except Exception as e:
+        print('Rise error, Floor_table creation error', e)
 
     conn.commit()

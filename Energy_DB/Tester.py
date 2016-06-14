@@ -20,7 +20,7 @@ class Tester():
         return test_sets_list
 
     def test_detector_value(self,n):
-        value = random.uniform(18.0, 28.0)
+        value = round(random.uniform(18.0, 28.0),3)
         detector_number = random.randint(0,n-1)
         detector_name = self.test_sets_list[detector_number]
         #print(detector_name)

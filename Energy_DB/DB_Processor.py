@@ -1,5 +1,5 @@
 import uuid
-
+import Detector
 #Add item to table
 class Adder():
     def __init__(self, conn):
@@ -22,8 +22,8 @@ class Adder():
             self.conn.commit()
             self.flag = True
             print('Building_added')
-        except:
-            print('Building add fail')
+        except Exception as e:
+            print('Building add fail', e)
             self.flag = False
         self.conn.commit()
         return self.flag
@@ -39,8 +39,8 @@ class Adder():
                                 ("guid","floor_name","office") VALUES (%s,%s,%s)""", (self.floor_GUID, floor_name, office))
                 self.conn.commit()
                 print('Floor_added')
-        except:
-            print('Floor add fail')
+        except Exception as e:
+            print('Floor add fail', e)
             self.flag = False
         self.conn.commit()
         return self.flag
@@ -56,8 +56,8 @@ class Adder():
                                 ("guid","office_name","room") VALUES (%s,%s,%s)""", (self.office_GUID, office_name, room))
                 self.conn.commit()
                 print('Office_added')
-        except:
-            print('Office add fail')
+        except Exception as e:
+            print('Office add fail', e)
         self.conn.commit()
         return self.flag
 
@@ -72,8 +72,8 @@ class Adder():
                                 ("guid","room_name","detector") VALUES (%s,%s,%s)""",(self.room_GUID, room_name, detector))
                 self.conn.commit()
                 print('Room_added')
-        except:
-            print('Room add fail')
+        except Exception as e:
+            print('Room add fail', e)
         self.conn.commit()
         return self.flag
 
@@ -88,8 +88,8 @@ class Adder():
                                 ("guid","detector_name") VALUES (%s,%s)""", (self.detector_GUID, detector_name ))
                 self.conn.commit()
                 print('Detector_added')
-        except:
-            print('Detector add fail')
+        except Exception as e:
+            print('Detector add fail', e)
         self.conn.commit()
 
 
@@ -100,33 +100,118 @@ class Updater():
         self.cur = self.conn.cursor()
 
     def update (self, detector_name, value,  time):
-        detector_name = detector_name.split('|')
-        time_column = 'Hour_7'+str(time)
+        detector_name = detector_name.split('|')[-1]
+        time_column = 'hour_'+str(time+1)
+        print(detector_name, time_column)
         try:
-            self.cur.execute('''UPDATE public.detectors SET "total_games"=%s WHERE "detector_name"=%s""",(p1.total_games,))''')
+            execute_string = 'UPDATE public.detectors SET {}={} WHERE detector_name = \'{}\';'.format(time_column, value, detector_name)
+            print(execute_string)
+            self.cur.execute(execute_string)
             self.conn.commit()
-        except:
-            print('Rise update error')
+        except Exception as e:
+            print('Rise update error', e)
             self.conn.commit()
-
-
 
 
 #Get detecrtor from table
 class Getter():
     def __init__(self, conn):
-        self.cur = conn.cursor()
+        self.conn = conn
+        self.cur = self.conn.cursor()
+
+    def make_answer(self, execute_string):
+        #print(execute_string)
+        try:
+            self.cur.execute(execute_string)
+            detector_data = self.cur.fetchall()
+            self.conn.commit()
+            detector = Detector.Detector(detector_data[0][0], detector_data[0][-24:])
+            return detector
+        except Exception as e:
+            print('Rise update error', e)
+            self.conn.commit()
 
     def get_building(self, building_name):
-        pass
+        execute_string = """SELECT building_name, floor_name, office_name,room_name, detector_name,
+                                    hour_1, hour_2, hour_3, hour_4, hour_5, hour_6, hour_7, hour_8,
+                                    hour_9, hour_10, hour_11, hour_12, hour_13, hour_14, hour_15, hour_16,
+                                    hour_17, hour_18, hour_19, hour_20, hour_21, hour_22, hour_23, hour_24
+                              FROM public.detectors AS detectors
+                              JOIN public.rooms AS rooms ON rooms.detector=detectors.guid
+                              JOIN public.offices AS offices ON offices.room=rooms.guid
+                              JOIN public.floors AS floors ON floors.office=offices.guid
+                              JOIN public.buildings AS buildings ON buildings.floor=floors.guid
+                              WHERE buildings.building_name = '{}'""".format(building_name)
+        self.make_answer(execute_string)
 
     def get_floor(self, building_name, floor_name):
-        pass
+        execute_string = """SELECT building_name, floor_name, office_name,room_name, detector_name,
+                                    hour_1, hour_2, hour_3, hour_4, hour_5, hour_6, hour_7, hour_8,
+                                    hour_9, hour_10, hour_11, hour_12, hour_13, hour_14, hour_15, hour_16,
+                                    hour_17, hour_18, hour_19, hour_20, hour_21, hour_22, hour_23, hour_24
+                              FROM public.detectors AS detectors
+                              JOIN public.rooms AS rooms ON rooms.detector=detectors.guid
+                              JOIN public.offices AS offices ON offices.room=rooms.guid
+                              JOIN public.floors AS floors ON floors.office=offices.guid
+                              JOIN public.buildings AS buildings ON buildings.floor=floors.guid
+                              WHERE buildings.building_name = '{}'
+                                    AND
+                                    floors.floor_name = '{}'""".format(building_name, floor_name)
+        self.make_answer(execute_string)
 
     def get_office(self, building_name, floor_name, office_name):
-        pass
+        execute_string = """SELECT building_name, floor_name, office_name,room_name, detector_name,
+                                    hour_1, hour_2, hour_3, hour_4, hour_5, hour_6, hour_7, hour_8,
+                                    hour_9, hour_10, hour_11, hour_12, hour_13, hour_14, hour_15, hour_16,
+                                    hour_17, hour_18, hour_19, hour_20, hour_21, hour_22, hour_23, hour_24
+                              FROM public.detectors AS detectors
+                              JOIN public.rooms AS rooms ON rooms.detector=detectors.guid
+                              JOIN public.offices AS offices ON offices.room=rooms.guid
+                              JOIN public.floors AS floors ON floors.office=offices.guid
+                              JOIN public.buildings AS buildings ON buildings.floor=floors.guid
+                              WHERE buildings.building_name = '{}'
+                                    AND
+                                    floors.floor_name = '{}'
+                                    AND
+                                    offices.office_name = '{}'""".format(building_name, floor_name, office_name)
+        self.make_answer(execute_string)
 
     def get_room(self, building_name, floor_name, office_name, room_name):
-        pass
+        execute_string = """SELECT building_name, floor_name, office_name,room_name, detector_name,
+                                           hour_1, hour_2, hour_3, hour_4, hour_5, hour_6, hour_7, hour_8,
+                                           hour_9, hour_10, hour_11, hour_12, hour_13, hour_14, hour_15, hour_16,
+                                           hour_17, hour_18, hour_19, hour_20, hour_21, hour_22, hour_23, hour_24
+                                     FROM public.detectors AS detectors
+                                     JOIN public.rooms AS rooms ON rooms.detector=detectors.guid
+                                     JOIN public.offices AS offices ON offices.room=rooms.guid
+                                     JOIN public.floors AS floors ON floors.office=offices.guid
+                                     JOIN public.buildings AS buildings ON buildings.floor=floors.guid
+                                     WHERE buildings.building_name = '{}'
+                                           AND
+                                           floors.floor_name = '{}'
+                                           AND
+                                           offices.office_name = '{}'
+                                           AND
+                                           rooms.room_name = '{}'""".format(building_name, floor_name, office_name, room_name)
+        self.make_answer(execute_string)
 
     def get_detector(self, building_name, floor_name, office_name, room_name, detector_name):
+        execute_string = """SELECT building_name, floor_name, office_name,room_name, detector_name,
+                                           hour_1, hour_2, hour_3, hour_4, hour_5, hour_6, hour_7, hour_8,
+                                           hour_9, hour_10, hour_11, hour_12, hour_13, hour_14, hour_15, hour_16,
+                                           hour_17, hour_18, hour_19, hour_20, hour_21, hour_22, hour_23, hour_24
+                                     FROM public.detectors AS detectors
+                                     JOIN public.rooms AS rooms ON rooms.detector=detectors.guid
+                                     JOIN public.offices AS offices ON offices.room=rooms.guid
+                                     JOIN public.floors AS floors ON floors.office=offices.guid
+                                     JOIN public.buildings AS buildings ON buildings.floor=floors.guid
+                                     WHERE buildings.building_name = '{}'
+                                           AND
+                                           floors.floor_name = '{}'
+                                           AND
+                                           offices.office_name = '{}'
+                                           AND
+                                           rooms.room_name = '{}'
+                                           AND
+                                           detectors.detector_name = '{}'""".format(building_name, floor_name, office_name, room_name, detector_name)
+        self.make_answer(execute_string)
