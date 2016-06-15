@@ -6,6 +6,7 @@ def create_tables(conn):
         cur.execute("""CREATE TABLE IF NOT EXISTS Detectors
                   (
                     GUID CHARACTER VARYING (36) NOT NULL PRIMARY KEY,
+                    Link CHARACTER VARYING (36) NOT NULL,
                     detector_name CHARACTER VARYING (200),
                     Hour_1 REAL, Hour_2 REAL, Hour_3 REAL, Hour_4 REAL, Hour_5 REAL, Hour_6 REAL,
                     Hour_7 REAL, Hour_8 REAL, Hour_9 REAL, Hour_10 REAL, Hour_11 REAL, Hour_12 REAL,
@@ -20,8 +21,9 @@ def create_tables(conn):
         cur.execute('''CREATE TABLE IF NOT EXISTS Rooms
                   (
                     GUID CHARACTER VARYING (36) NOT NULL PRIMARY KEY,
+                    Link CHARACTER VARYING (36) NOT NULL,
                     room_name CHARACTER VARYING (200),
-                    detector CHARACTER VARYING (200)
+                    detector CHARACTER VARYING (36)
                     ) ''')
     except Exception as e:
         print('Rise error, Room_table creation error', e)
@@ -31,8 +33,9 @@ def create_tables(conn):
         cur.execute('''CREATE TABLE IF NOT EXISTS Offices
                   (
                     GUID CHARACTER VARYING (36) NOT NULL PRIMARY KEY,
+                    Link CHARACTER VARYING (36) NOT NULL,
                     office_name CHARACTER VARYING (200),
-                    room CHARACTER VARYING (200)
+                    room CHARACTER VARYING (36)
                     ) ''')
     except Exception as e:
         print('Rise error, Office_table creation error', e)
@@ -42,8 +45,9 @@ def create_tables(conn):
         cur.execute('''CREATE TABLE IF NOT EXISTS Floors
                   (
                     GUID CHARACTER VARYING (36) NOT NULL PRIMARY KEY,
+                    Link CHARACTER VARYING (36) NOT NULL,
                     floor_name CHARACTER VARYING (200),
-                    office CHARACTER VARYING (200)
+                    office CHARACTER VARYING (36)
                     ) ''')
     except Exception as e:
         print('Rise error, Floor_table creation error', e)
@@ -54,7 +58,7 @@ def create_tables(conn):
                   (
                     GUID CHARACTER VARYING (36) NOT NULL PRIMARY KEY,
                     Building_name CHARACTER VARYING (200),
-                    floor CHARACTER VARYING (200)
+                    floor CHARACTER VARYING (36)
                     ) ''')
     except Exception as e:
         print('Rise error, Floor_table creation error', e)
